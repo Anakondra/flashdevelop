@@ -167,7 +167,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(marginfore);
                 }
-                return ResolveColor("0xf5f5f5");
+                return ResolveColor("0xffffff");
             }
         }
 
@@ -179,7 +179,7 @@ namespace ScintillaNet.Configuration
                 {
                     return ResolveColor(marginback);
                 }
-                return ResolveColor("0xfaf0e6");
+                return ResolveColor("0xffffff");
             }
         }
 

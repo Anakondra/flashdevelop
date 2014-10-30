@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Scintilla xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<keyword-classes>
 		<keyword-class name="haxe-primary-keywords">
@@ -69,7 +69,7 @@
 				<style name="commentdockeyword" fore="0x800000" />
 				<style name="commentdockeyworderror" fore="0xff0000" />
 				<style name="globalclass" fore="0x1518ff" />
-				<style name="gdefault" fore="0xc0c0c0" />
+				<style name="gdefault" fore="0xe4e2d5" />
 				<style name="linenumber" fore="0x666666" />
 				<style name="bracelight" fore="0x0000cc" back="0xcdcdff" bold="true" />
 				<style name="bracebad" bold="true" />

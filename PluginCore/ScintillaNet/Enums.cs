@@ -74,14 +74,14 @@ namespace ScintillaNet.Enums
         FolderOpen = 31
     }
     
-    public enum MarginType
+    public static class MarginType
     {    
-        Symbol = 0,
-        Number = 1,
-        Back = 2,
-        Fore = 3,
-        Text = 4,
-        Rtext = 5
+        public const int Symbol = 0;
+        public const int Number = 1;
+        public const int Back = 2;
+        public const int Fore = 3;
+        public const int Text = 4;
+        public const int Rtext = 5;
     }
     
 	public enum WhiteSpace

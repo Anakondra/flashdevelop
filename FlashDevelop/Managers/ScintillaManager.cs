@@ -15,6 +15,7 @@ using PluginCore.Utilities;
 using PluginCore.Controls;
 using PluginCore.Helpers;
 using ScintillaNet;
+using ScintillaNet.Enums;
 using PluginCore;
 
 namespace FlashDevelop.Managers
@@ -224,7 +225,7 @@ namespace FlashDevelop.Managers
                 * Set correct line number margin width
                 */
                 Boolean viewLineNumbers = Globals.Settings.ViewLineNumbers;
-                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(31));
+                if (viewLineNumbers) sci.SetMarginWidthN(1, ScaleHelper.Scale(36));
                 else sci.SetMarginWidthN(1, 0);
                 /**
                 * Set correct bookmark margin width
@@ -248,9 +249,9 @@ namespace FlashDevelop.Managers
                 /**
                 * Add missing ignored keys
                 */
-                foreach (Keys keys in ShortcutManager.AllShortcuts)
+                foreach (System.Windows.Forms.Keys keys in ShortcutManager.AllShortcuts)
                 {
-                    if (keys != Keys.None && !sci.ContainsIgnoredKeys(keys))
+                    if (keys != System.Windows.Forms.Keys.None && !sci.ContainsIgnoredKeys(keys))
                     {
                         sci.AddIgnoredKeys(keys);
                     }
@@ -326,11 +327,11 @@ namespace FlashDevelop.Managers
             sci.XOffset = 0;
             sci.ZoomLevel = 0;
             sci.UsePopUp(false);
-            sci.SetMarginTypeN(0, 0);
+            sci.SetMarginTypeN(0, MarginType.Fore);
             sci.SetMarginWidthN(0, ScaleHelper.Scale(14));
-            sci.SetMarginTypeN(1, 1);
-            sci.SetMarginMaskN(1, 0);
-            sci.SetMarginTypeN(2, 0);
+            sci.SetMarginTypeN(1, MarginType.Number);
+            sci.SetMarginMaskN(1, MarginType.Symbol);
+            sci.SetMarginTypeN(2, MarginType.Symbol);
             sci.SetMarginMaskN(2, -33554432 | 1 << 2);
             sci.SetMultiSelectionTyping(true);
             sci.MarginSensitiveN(2, true);
