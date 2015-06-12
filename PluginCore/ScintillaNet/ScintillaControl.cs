@@ -278,6 +278,7 @@ namespace ScintillaNet
             //this.fctb.ChangedLineColor = DataConverter.BGRToColor(lang.editorstyle.ModifiedLineColor);
             this.fctb.BookmarkColor = DataConverter.BGRToColor(lang.editorstyle.BookmarkLineColor);
             // EdgeColour = lang.editorstyle.PrintMarginColor;
+            FastColoredTextBoxNS.CustomHighlighter.Language = lang;
         }
 
         private FastColoredTextBoxNS.Style GetFCTBStyle(int style)

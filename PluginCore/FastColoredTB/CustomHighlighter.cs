@@ -4,12 +4,41 @@ using System.Text;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using ScintillaNet.Configuration;
 using ScintillaNet.Enums;
+using ScintillaNet.Lexers;
 
 namespace FastColoredTextBoxNS
 {
     public static class CustomHighlighter
     {
+        public static ScintillaNet.Configuration.Language Language
+        {
+            set
+            {
+                language = value;
+                for (int i = 0; i < 32; i++)
+                {
+                    regexes[i] = new Regex("");
+
+                    UseStyle style = language.GetUseStyle(i);
+                    if (style != null)
+                        styles[i] = new TextStyle(
+                            BrushFromRGB(style.ForegroundColor),
+                            BrushFromRGB(style.BackgroundColor),
+                            System.Drawing.FontStyle.Regular);
+                }
+                InitCppRegexes();
+            }
+            get { return language; }
+        }
+
+        private static Brush BrushFromRGB(int color)
+        {
+            return new SolidBrush(Color.FromArgb(color & 0xFF, color >> 8 & 0xFF, color >> 16 & 0xFF));
+        }
+
+        private static ScintillaNet.Configuration.Language language;
         private static FastColoredTextBox editor;
         private static Regex[] regexes = new Regex[32];
         private static Style[] styles = new Style[32];
@@ -22,61 +51,61 @@ namespace FastColoredTextBoxNS
         * DisabledColor, CaretColor, ServiceLinesColor, FoldingIndicatorColor, ServiceColors (has 6), 
         */
 
-        /*
-        DEFAULT = 0,
-        COMMENT = 1,
-        COMMENTLINE = 2,
-        COMMENTDOC = 3,
-        NUMBER = 4,
-        WORD = 5,
-        STRING = 6,
-        CHARACTER = 7,
-        UUID = 8,
-        PREPROCESSOR = 9,
-        OPERATOR = 10,
-        IDENTIFIER = 11,
-        STRINGEOL = 12,
-        VERBATIM = 13,
-        REGEX = 14,
-        COMMENTLINEDOC = 15,
-        WORD2 = 16,
-        COMMENTDOCKEYWORD = 17,
-        COMMENTDOCKEYWORDERROR = 18,
-        GLOBALCLASS = 19,
-        STRINGRAW = 20,
-        TRIPLEVERBATIM = 21,
-        HASHQUOTEDSTRING = 22,
-        PREPROCESSORCOMMENT = 23,
-        WORD3 = 24,
-        WORD4 = 25,
-        WORD5 = 26,
-        //
-        GDEFAULT = 32,
-        LINENUMBER = 33,
-        BRACELIGHT = 34,
-        BRACEBAD = 35,
-        CONTROLCHAR = 36,
-        INDENTGUIDE = 37,
-        LASTPREDEFINED = 39
-        */
+        static class CPP
+        {
+            public const int DEFAULT = 0;
+            public const int COMMENT = 1;
+            public const int COMMENTLINE = 2;
+            public const int COMMENTDOC = 3;
+            public const int NUMBER = 4;
+            public const int WORD = 5;
+            public const int STRING = 6;
+            public const int CHARACTER = 7;
+            public const int UUID = 8;
+            public const int PREPROCESSOR = 9;
+            public const int OPERATOR = 10;
+            public const int IDENTIFIER = 11;
+            public const int STRINGEOL = 12;
+            public const int VERBATIM = 13;
+            public const int REGEX = 14;
+            public const int COMMENTLINEDOC = 15;
+            public const int WORD2 = 16;
+            public const int COMMENTDOCKEYWORD = 17;
+            public const int COMMENTDOCKEYWORDERROR = 18;
+            public const int GLOBALCLASS = 19;
+            public const int STRINGRAW = 20;
+            public const int TRIPLEVERBATIM = 21;
+            public const int HASHQUOTEDSTRING = 22;
+            public const int PREPROCESSORCOMMENT = 23;
+            public const int WORD3 = 24;
+            public const int WORD4 = 25;
+            public const int WORD5 = 26;
+            public const int GDEFAULT = 32;
+            public const int LINENUMBER = 33;
+            public const int BRACELIGHT = 34;
+            public const int BRACEBAD = 35;
+            public const int CONTROLCHAR = 36;
+            public const int INDENTGUIDE = 37;
+            public const int LASTPREDEFINED = 39;
+        }
 
         public static void Init(FastColoredTextBox fctb)
         {
             editor = fctb;
             editor.AllowSeveralTextStyleDrawing = true;
-            styles = new Style[32];
-            regexes = new Regex[32];
-            for (int i = 0; i < 32; i++)
-            {
-                regexes[i] = new Regex("");
-                styles[i] = new TextStyle(new SolidBrush(SystemColors.Highlight), null, System.Drawing.FontStyle.Regular);
-            }
-            regexes[31] = new Regex(@"\b(class|var|else|if)\b");
             editor.TextChanged += OnTextChangedDelayed;
+        }
+
+        private static void InitCppRegexes()
+        {
+            regexes[CPP.COMMENT] = new Regex(@"//.*$", RegexOptions.Multiline | RegexOptions.Compiled);
+            regexes[CPP.STRING] = new Regex(@"""""|''|"".*?[^\\]""|'.*?[^\\]'", RegexOptions.Compiled);
         }
 
         private static void OnTextChangedDelayed(Object sender, TextChangedEventArgs e)
         {
+            if (Language == null) return;
+
             Range range = editor.Range;
 
             // set options
@@ -90,9 +119,11 @@ namespace FastColoredTextBoxNS
             range.tb.AutoIndentCharsPatterns = @"^\s*[\w\.]+(\s\w+)?\s*(?<range>=)\s*(?<range>[^;]+);^\s*(case|default)\s*[^:]*(?<range>:)\s*(?<range>[^;]+);";
             range.tb.BracketsHighlightStrategy = BracketsHighlightStrategy.Strategy1;
 
-            // set styles
             range.ClearStyle(styles);
-            range.SetStyle(styles[31], regexes[31]);
+            //highlight syntax
+            for (int i = 0; i < 32; i++)
+                if (styles[i] != null)
+                    range.SetStyle(styles[i], regexes[i]);
 
             // set folding markers
             range.ClearFoldingMarkers();
